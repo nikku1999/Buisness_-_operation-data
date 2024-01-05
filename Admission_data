@@ -1,0 +1,71 @@
+SELECT sub.*,
+case when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year = 1 and total_paid < 5000 then 'Less than Registration'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year = 1 and total_paid = 5000  then 'Registration only'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year = 1 and (total_paid >5000 and total_paid<= 0.50*fee_amount)  then 'b/w registration and 1st inst.'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year = 1 and (total_paid >0.50*fee_amount and total_paid<= 0.90*fee_amount)  then '1st inst. only'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%' or course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (1,2,3,4) and (total_paid >0.90*fee_amount)  then 'Full Payment Done'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (2,3,4) and total_paid < 10000 then 'Less than Registration'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (2,3,4) and total_paid =10000 then 'Registration only'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year=2 and (total_paid > 10000 and total_paid <=0.30*fee_amount) then 'b/w registration and 1st inst.'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (3,4) and (total_paid > 10000 and total_paid <=0.20*fee_amount) then 'b/w registration and 1st inst.'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (2) and (total_paid >0.30*fee_amount and total_paid <= 0.35*fee_amount) then '1st inst. only'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (3,4) and (total_paid > 0.2*fee_amount and total_paid <= 0.25*fee_amount) then '1st inst. only'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (2) and (total_paid > 0.35*fee_amount and total_paid <= 0.60*fee_amount) then 'b/w 1st and 2nd inst.'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (3,4) and (total_paid >0.25*fee_amount and total_paid <= 0.45*fee_amount) then 'b/w 1st and 2nd inst.'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (2) and (total_paid > 0.60*fee_amount and total_paid <= 0.90*fee_amount) then '2nd inst. only'
+when (course like '%6th%' or course like '%7th%' or course like '%8th%' or course like '%9th%' or course like '%10th%') and enrolled_year in (3,4) and (total_paid >0.45*fee_amount and total_paid <= 0.90*fee_amount) then '2nd inst. only'
+
+
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (1,2) and (total_paid < 10000 )  then 'Less than Registration'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (1,2) and total_paid = 10000 then 'Registration only'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (1) and (total_paid >10000 and total_paid <=0.50*fee_amount)  then 'b/w registration and 1st inst.'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (2) and (total_paid >10000 and total_paid <=0.30*fee_amount)  then 'b/w registration and 1st inst.'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (1) and (total_paid > 0.50*fee_amount and total_paid <=0.90*fee_amount)  then '1st inst. only'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (2) and (total_paid > 0.30*fee_amount and total_paid <=0.35*fee_amount)  then '1st inst. only'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (2) and (total_paid > 0.35*fee_amount and total_paid <=0.60*fee_amount)  then 'b/w 1st and 2nd inst.'
+when (course like '%11th%' or course like '%12th%' or course like '%DROPPER%') and enrolled_year in (2) and (total_paid > 0.60*fee_amount and total_paid <=0.90*fee_amount)  then '2nd inst. only'
+End as inst_paid,
+case when (course like '%11th%' OR course like '%12th%') AND enrolled_year = 1 then concession/(bill_amount-1899-8475)
+when course like '%DROPPER%' AND enrolled_year = 1 then concession/(bill_amount-3000-8475)
+when course like '%11th%' and enrolled_year = 2 then concession/(bill_amount-3798-8475)
+when (course like '%10th%' or course like '%9th%' or course like '%8th%') and enrolled_year = 1 then concession/(bill_amount-1399-4237)
+when course like '%10th%' and enrolled_year = 3 then concession/(bill_amount-5197-8475)
+when course like '%9th%' and enrolled_year = 4 then concession/(bill_amount-6596-8475)
+when course like '%9th%' and enrolled_year = 2 then concession/(bill_amount-2799-8475)
+when course like '%8th%' and enrolled_year = 3 then concession/(bill_amount-4197-8475)
+end as discount,
+CASE WHEN Course like '%11th%' AND COURSE LIKE '%2026%' then 'AY 24-25'
+WHEN (Course like '%12th%' OR Course like '%DROPPER%') AND COURSE LIKE '%2025%' THEN 'AY 24-25'
+WHEN (COURSE LIKE '%8th%' OR COURSE LIKE '%9th%' OR COURSE LIKE '%10th%') AND Course like '%2025%' then 'AY 24-25'
+WHEN Course like '%11th%' AND COURSE LIKE '%2025%' then 'AY 23-24'
+WHEN (Course like '%12th%' OR Course like '%DROPPER%') AND COURSE LIKE '%2024%' THEN 'AY 23-24'
+WHEN (COURSE LIKE '%8th%' OR COURSE LIKE '%9th%' OR COURSE LIKE '%10th%') AND Course like '%2024%' then 'AY 23-24'
+END AS Acadamic_year
+FROM
+(SELECT Distinct students.reg_no,students.student_name,projection.studentid,projection.concession,projection.bill_amount,projection.total_payable_with_gst as fee_amount,total_paid+adjusted_amt as total_paid,students.joining_date::date,students.course,students.scheme,form_status,source_name,paid_amount, ROW_NUMBER() OVER (PARTITION BY receipt.reg_no ORDER BY receipt_date)AS row_number,batch,BATCH_PREFERENCE,jodo_status,employeecode,employeerfidnumber,
+case when students.scheme not like '%2yr%' and students.scheme not like '%3yr%' and students.scheme not like '%4yr%' then 1
+when students.scheme like '%2yr%' then 2
+when students.scheme like '%3yr%' then 3
+when students.scheme like '%4yr%' then 4 End as enrolled_year
+FROM offline.offline_students_humming students
+left join offline.offline_projection_erp projection
+on students.student_id = projection.studentid
+left join offline.offline_receipt_humming receipt
+on students.reg_no = receipt.reg_no
+left join  essl.employees e
+on students.reg_no=e.employeecode
+where students.status in ('Active')
+and students.scheme not like '%Rankers%'
+and students.scheme not like '%T2%'
+and students.scheme not like '%MIP%'
+and students.course not like '%Fastrack%'
+and students.course not like '%Test%'
+and Students.course not like '%AITS%'
+and students.student_name not ilike '%Test%'
+and students.student_name not like '%TTTEESST%'
+and projection.So_Status = 'NEW'
+and is_active = 'True' and receipt_no NOT ilike '%adjusted%'
+and (students.center like '%Ahmedabad%' OR Students.center like '%Gandhinagar%')
+) sub
+where row_number = 1 
+ORDER BY joining_date DESC,student_name
