@@ -1,0 +1,19 @@
+select enquiry_number,name,gender,father,phone_no,class,course,stream,branch,enquiry_date,"user",reg_no,
+CASE WHEN Course like '%11th%' AND COURSE LIKE '%2026%' then 'AY 25-26'
+WHEN (Course like '%12th%' OR Course like '%DROPPER%') AND COURSE LIKE '%2025%' THEN 'AY 25-26'
+WHEN (COURSE LIKE '%8th%' OR COURSE LIKE '%9th%' OR COURSE LIKE '%10th%') AND Course like '%2025%' then 'AY 25-26'
+WHEN Course like '%11th%' AND COURSE LIKE '%2025%' then 'AY 24-25'
+WHEN (Course like '%12th%' OR Course like '%DROPPER%') AND COURSE LIKE '%2024%' THEN 'AY 24-25'
+WHEN (COURSE LIKE '%8th%' OR COURSE LIKE '%9th%' OR COURSE LIKE '%10th%') AND Course like '%2024%' then 'AY 24-25'
+END AS Acadamic_year,remarks as erp_remark
+from offline.offline_enquiry_humming
+where course like '%Vidyapeeth%'
+and course not like '%Fastrack%'
+and course not like '%Test%'
+and course not like '%D2%'
+and status = 'Active'
+and NAME not like '%test%'
+and name not like '%demo%'
+and Phone_No not in ('e807f1fcf82d132f9bb018ca6738a19f','f1b708bba17f1ce948dc979f4d7092bc','d41d8cd98f00b204e9800998ecf8427e','eb828f37f633ae7883cf305aa587309d','3c78f85d12d899a76795eae89ec603d1','699819e6a58873755bd3b7d90f3ccd76','ddfb2232b6feb829efabed3cff3719af')
+and (branch like '%Ahmedabad%' or branch like '%Gandhinagar%')
+ORDER BY enquiry_date DESC
