@@ -1,0 +1,85 @@
+select head_count.center, course, head_count.batch_name, punch_date::date, head_count, Enrolled_Students from
+(select center, 
+case when batch_name like '%AN%'  and (batch_name like '%EA%' OR batch_name like '%MA%') then '11th NEET'
+when batch_name like '%AJ%' then '11th JEE' 
+when batch_name like '%LJ%' then '12th JEE'
+when batch_name like '%LN%' then '12th NEET'
+when batch_name like '%PJ%' then 'Dropper JEE'
+when batch_name like '%YN%'  and (batch_name like '%EA%' OR batch_name like '%MA%') then 'Dropper NEET'
+when batch_name like '%NF%' then '9th'
+when batch_name like '%UF%' then '10th'
+when batch_name like '%UP%' then '8th'
+when batch_name like '%AN%' and batch_name like '%EJ%' then '11th NEET Guj'
+when batch_name like '%YN%' and batch_name like '%EJ%' then 'DROPPER NEET Guj'
+end as course, batch_name, punch_date, count(batch_name) as head_count
+from(
+
+((select * from(
+(select reg_no, center, CASE WHEN batch IS NULL OR batch = '' THEN '' ELSE CONCAT('Vidyapeeth ', batch) END AS batch_name from(
+(select * from 
+(select reg_no, center, scheme, status, batch from offline.offline_students_humming
+where center not like '%Pathshala%'
+and scheme not like '%Fastrack%'
+and scheme not like '%Test%'
+and status = 'Active')
+where center like '%Ahmedabad%Vidyapeeth%' OR center like '%Gandhinagar%Vidyapeeth%')a
+
+Left Join
+
+(select reg_no as nreg_no, total_payable_with_gst as fees_amt, (total_paid+adjusted_amt) as amount_paid, so_status from offline.offline_projection_humming where so_status = 'NEW')b
+on a.reg_no = b.nreg_no)
+where fees_amt>0)student
+
+LEFT JOIN
+
+(select name, _id from batches where status = 'Active')batch
+on student.batch_name = batch.name)
+where batch_name is not null)students
+
+Left Join
+
+(select distinct date, batchid from(
+(select batchid, _id from public.batch_subjects)z
+join
+(select * from
+(select ISDPPVIDEOS,ISDPPNOTES,BATCHSUBJECTID,DAY,DATE::date,STARTTIME,ENDTIME,CREATEDAT,UPDATEDAT,TOPIC,TOPIC_NAME_CLEANED,_ID from public.batch_subject_schedules where status <> 'Inactive' and TOPIC_NAME_CLEANED not ilike '%test%' and TOPIC not ilike '%Test%' and TOPIC not ilike '%Extra%' and TOPIC not ilike '%EXTRA%' and TOPIC not ilike '%*%' and TOPIC_NAME_CLEANED not ilike '%noclass%' and TOPIC_NAME_CLEANED not ilike '%extra%' and ISDPPNOTES = 'false' and ISDPPVIDEOS = 'false' and TOPIC not ilike '%Weekly class schedule%')
+where date <= current_date
+and date >= current_date-7)y
+on z._id = y.BATCHSUBJECTID)
+order by date desc) batch_schedule
+ON students._id = batch_schedule.batchid) students_patna_vp
+
+left join
+
+(select distinct employeecode, punchdatetime :: date as punch_date from essl.devicepunchlogs) AS devicepunchlogs
+on students_patna_vp.reg_no = devicepunchlogs.employeecode
+and students_patna_vp.date = devicepunchlogs.punch_date)
+group by center, punch_date, batch_name
+having punch_date is not null
+and len(batch_name)>1
+order by punch_date,batch_name) head_count
+
+JOIN
+
+(select center, batch_name, count(batch_name) as Enrolled_Students from
+(select reg_no, center, CASE WHEN batch IS NULL OR batch = '' THEN '' ELSE CONCAT('Vidyapeeth ', batch) END AS batch_name from(
+(select * from 
+(select reg_no, center, scheme, status, batch from offline.offline_students_humming
+where center not like '%Pathshala%'
+and scheme not like '%Fastrack%'
+and scheme not like '%Test%'
+and status = 'Active')
+where center like '%Ahmedabad%Vidyapeeth%' OR center like '%Gandhinagar%Vidyapeeth%' )a
+
+Left Join
+
+(select reg_no as nreg_no, total_payable_with_gst as fees_amt, (total_paid+adjusted_amt) as amount_paid, so_status from offline.offline_projection_humming where so_status = 'NEW')b
+on a.reg_no = b.nreg_no)
+where fees_amt>0
+and len(batch_name)>1)
+group by center, batch_name) allotted
+
+on head_count.batch_name = allotted.batch_name
+
+where Enrolled_students > 5
+order by punch_date desc
